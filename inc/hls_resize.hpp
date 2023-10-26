@@ -12,15 +12,14 @@
 #include "xrt/xrt.h"
 #include "opencv2/opencv.hpp"
 
-using namespace std;
 using namespace cv;
 
-#define CU_NAME "resize_normalize_accel"
+#define CU_NAME "resize_accel"
 
-class hls_resize_normalize{
+class hls_resize{
     public:
-    int initial(const string xclbin_path);
-    Mat run(const Mat img_in, const unsigned int out_row, const unsigned int out_col,const float* param);
+    int initial(const char* xclbin_path);
+    Mat run(const Mat img_in, const unsigned int out_row, const unsigned int out_col);
     void release();
     int status; // this status from "ert.h" shows the runner wait status of previous run
         /*
@@ -39,15 +38,11 @@ class hls_resize_normalize{
         */
     private:
     void set(const unsigned int in_row, const unsigned int in_col, const unsigned int out_row, const unsigned int out_col);
-    xrt::device device;// device handle
-    xrt::kernel kernel; // kernel handle
-    xrt::uuid uuid;
-    xrt::run runner; // runner handle
-    // xrtBufferHandle bo_img_in; // input image BO
-    // xrtBufferHandle bo_img_out; // output image BO
-    xrt::bo bo_img_in;
-    xrt::bo bo_img_out;
-    xrt::bo bo_params;
+    xrtDeviceHandle dhdl; // device handle
+    xrtKernelHandle khdl; // kernel handle
+    xrtRunHandle runner; // runner handle
+    xrtBufferHandle bo_img_in; // input image BO
+    xrtBufferHandle bo_img_out; // output image BO
     unsigned int in_width;
     unsigned int in_height;
     unsigned int out_width;

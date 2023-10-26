@@ -5,7 +5,7 @@
 
 #include <string>
 #include <unistd.h>
-#include "hls_resize_normalize.hpp"
+#include "hls_resize.hpp"
 
 using namespace std;
 using namespace cv;

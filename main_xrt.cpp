@@ -5,7 +5,7 @@
 
 #include <string>
 #include <unistd.h>
-#include "hls_xrt_resize_normalize.hpp"
+#include "hls_resize_normalize.hpp"
 
 using namespace std;
 using namespace cv;
@@ -25,13 +25,16 @@ int main(int argc, char* argv[])
     unsigned int out_cols = 416;
     unsigned int out_rows = 416;
 
+
+
     cout << "hls api first call" << endl;
 
     hls_resize_normalize ip;
     ip.initial(argv[1]);
 
     clock_t t0 = clock();
-    img_out = ip.run(img_in, out_rows, out_cols);
+    float param[6]={0,0,0,1,1,1};
+    img_out = ip.run(img_in, out_rows, out_cols, param);
     cout << float(clock() - t0) / CLOCKS_PER_SEC << endl;
 
     imwrite("out_run.png", img_out);
@@ -39,7 +42,7 @@ int main(int argc, char* argv[])
     cout << "hls api second call" << endl;
 
     clock_t t1 = clock();
-    img_out2 = ip.run(img_in, out_rows, out_cols);
+    img_out2 = ip.run(img_in, out_rows, out_cols, param);
     cout << float(clock() - t1) / CLOCKS_PER_SEC << endl;
 
     imwrite("out_run2.png", img_out2);

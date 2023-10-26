@@ -11,8 +11,8 @@ dep = [
 ]
 
 inc_dir = [
-    '<SYSROOT>/usr/include/xrt/',
-    '<SYSROOT>/usr/include/',
+    '/home/eric/sdk_125/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include/xrt/',
+    '/home/eric/sdk_125/sysroots/cortexa72-cortexa53-xilinx-linux/usr/include/',
     'inc'
 ]
 
