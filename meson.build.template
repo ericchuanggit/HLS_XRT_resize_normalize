@@ -1,5 +1,5 @@
 project('project', 'cpp')
-target = 'main'
+target = 'xrt_main'
 
 cc = meson.get_compiler('cpp')
 
@@ -13,9 +13,8 @@ dep = [
 inc_dir = [
     '<SYSROOT>/usr/include/xrt/',
     '<SYSROOT>/usr/include/',
-    'inc'
 ]
 
-libs = [static_library('_hls_resize', 'src/hls_resize.cpp', dependencies : dep, include_directories : inc_dir)]
+libs = [static_library('_hls_resize', 'xrt_main.cpp', dependencies : dep, include_directories : inc_dir)]
 
 exe = executable(target, target + '.cpp', link_with : libs, dependencies : dep, include_directories : inc_dir)
