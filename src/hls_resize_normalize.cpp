@@ -32,7 +32,7 @@ void hls_resize_normalize::set(const unsigned int in_row, const unsigned int in_
     size_img_in = in_width*in_height*3*sizeof(unsigned char);
     size_img_out = out_width*out_height*3*sizeof(unsigned char);
     /* Allocate Mat */
-    img_out.create(out_height, out_width, CV_8UC3);
+    // img_out.create(out_height, out_width, CV_8UC3);
     /* Allocate XRT BO */
     bo_img_in     = xrt::bo(device, size_img_in, kernel.group_id(0));
     bo_img_out    = xrt::bo(device, size_img_out, kernel.group_id(1));
@@ -43,6 +43,9 @@ Mat hls_resize_normalize::run(const Mat img_in, const unsigned int out_row, cons
     /* Update augments and reallocate buffer if image size changed */
     if(in_width != (unsigned int)img_in.rows || in_height != (unsigned int)img_in.cols || out_width != out_row || out_height != out_col)
         set(img_in.rows, img_in.cols, out_row, out_col);
+    if(img_out.data)
+        img_out.release();
+    img_out.create(out_height, out_width, CV_8UC3);
 
     /* Write BO */
     bo_img_in.write(img_in.data);

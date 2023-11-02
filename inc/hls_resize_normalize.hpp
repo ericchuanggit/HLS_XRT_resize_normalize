@@ -15,7 +15,7 @@
 using namespace std;
 using namespace cv;
 
-#define CU_NAME "resize_normalize_accel"
+#define CU_NAME "resize_accel"
 
 class hls_resize_normalize{
     public:
