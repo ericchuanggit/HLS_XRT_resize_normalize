@@ -53,7 +53,7 @@ Mat hls_resize_normalize::run(const Mat img_in, const unsigned int out_row, cons
     bo_params.write(param);
     bo_params.sync(XCL_BO_SYNC_BO_TO_DEVICE);
     /* Execute runner */
-    runner(bo_img_in, bo_img_out, in_height, in_width, out_height, out_width, bo_params);
+    runner(bo_img_in, bo_img_out, in_width, in_height, out_width, out_height, bo_params);
     /* Wait for runner, 1 sec timeout */
     status = runner.wait(1000);
     /* Read BO */

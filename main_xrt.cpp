@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include "hls_resize_normalize.hpp"
 
+
 using namespace std;
 using namespace cv;
 
@@ -18,127 +19,72 @@ int main(int argc, char* argv[])
         return -1;
     }
 
-    Mat img_in, img_out, img_out2, img_out3;
+    Mat img_in, img_out, img_out_alpha, img_out_beta;
     img_in = imread(argv[2]);
     imwrite("tmp_in.png", img_in);
 
     unsigned int out_cols = 416;
     unsigned int out_rows = 416;
-
-
+    
+    // Mat img_resize;
+    // resize(img_in, img_resize, Size(1080, 1080), 0, 0, INTER_LINEAR);
+    // imwrite("resize.png", img_resize);
 
     cout << "hls api first call" << endl;
+    
 
     hls_resize_normalize ip;
     ip.initial(argv[1]);
 
+    cout << "[out_run.png]" << endl;
     clock_t t0 = clock();
-    float param[6]={0,0,0,1,1,1};
+    /***   normaliztion -> (pixel - alpha) * beta   ***/
+    float param[6]={0,0,0,1,1,1}; // param[0][1][2] -> alpha , param[3][4][5] -> beta
     img_out = ip.run(img_in, out_rows, out_cols, param);
     cout << float(clock() - t0) / CLOCKS_PER_SEC << endl << endl;
-
     imwrite("out_run.png", img_out);
 
-    // cout << "hls api second call" << endl;
-    // cout << "[out_run2.png]" << endl;
+    cout << "hls api second call" << endl;
+    cout << "[out_run_alpha.png]" << endl;
+    clock_t t1 = clock();
 
-    // clock_t t1 = clock();
-    // param[3]=1;
-    // param[4]=1;
-    // param[5]=1;
-    // param[0]=50;
-    // img_out2 = ip.run(img_in, out_rows, out_cols, param);
-    // cout << float(clock() - t1) / CLOCKS_PER_SEC << endl << endl;
-    // imwrite("out_run2.png", img_out2);
+    param[0]=50;
+    param[1]=50;
+    param[2]=50;
+    param[3]=1;
+    param[4]=1;
+    param[5]=1;
 
-    // cout << "param[0] = " << param[0] <<endl;
-    // cout << "param[1] = " << param[1] <<endl;
-    // cout << "param[2] = " << param[2] <<endl;
-    // cout << "param[3] = " << param[3] <<endl;
-    // cout << "param[4] = " << param[4] <<endl;
-    // cout << "param[5] = " << param[5] <<endl;
-
-    // cout << "[out_run3.png]" << endl;
-
-    // clock_t t2 = clock();
-    // param[0]=0;
-    // param[1]=50;
-    // img_out2 = ip.run(img_in, out_rows, out_cols, param);
-    // cout << float(clock() - t2) / CLOCKS_PER_SEC << endl << endl;
-    // imwrite("out_run3.png", img_out2);
+    img_out_alpha = ip.run(img_in, out_rows, out_cols, param);
+    cout << float(clock() - t1) / CLOCKS_PER_SEC << endl;
+    imwrite("out_run_alpha.png", img_out_alpha);
 
 
-    // cout << "param[0] = " << param[0] <<endl;
-    // cout << "param[1] = " << param[1] <<endl;
-    // cout << "param[2] = " << param[2] <<endl;
-    // cout << "param[3] = " << param[3] <<endl;
-    // cout << "param[4] = " << param[4] <<endl;
-    // cout << "param[5] = " << param[5] <<endl;
+    cout << "[out_run_beta.png]" << endl;
+    clock_t t2 = clock();
     
-    // cout << "[out_run4.png]" << endl;
-
-    // clock_t t3 = clock();
-    // param[1]=0;
-    // param[2]=50;
-    // img_out2 = ip.run(img_in, out_rows, out_cols, param);
-    // cout << float(clock() - t3) / CLOCKS_PER_SEC << endl << endl;
-    // imwrite("out_run4.png", img_out2);
-
-
-    // cout << "param[0] = " << param[0] <<endl;
-    // cout << "param[1] = " << param[1] <<endl;
-    // cout << "param[2] = " << param[2] <<endl;
-    // cout << "param[3] = " << param[3] <<endl;
-    // cout << "param[4] = " << param[4] <<endl;
-    // cout << "param[5] = " << param[5] <<endl;
+    param[0]=0;
+    param[1]=0;
+    param[2]=0;
+    param[3]=0.5;
+    param[4]=0.5;
+    param[5]=0.5;
     
-    // cout << "[out_run5.png]" << endl;
-
-    // clock_t t4 = clock();
-    // param[2]=0;
-    // param[3]=0.5;
-    // img_out2 = ip.run(img_in, out_rows, out_cols, param);
-    // cout << float(clock() - t4) / CLOCKS_PER_SEC << endl << endl;
-    // imwrite("out_run5.png", img_out2);
-
-
-    // cout << "param[0] = " << param[0] <<endl;
-    // cout << "param[1] = " << param[1] <<endl;
-    // cout << "param[2] = " << param[2] <<endl;
-    // cout << "param[3] = " << param[3] <<endl;
-    // cout << "param[4] = " << param[4] <<endl;
-    // cout << "param[5] = " << param[5] <<endl;
-
-    // cout << "[out_run6.png]" << endl;
-
-    // clock_t t5 = clock();
-    // param[0]=0;
-    // param[1]=0;
-    // param[2]=0;
-    // param[3]=0.5;
-    // param[4]=0.5;
-    // param[5]=0.5;
-    // img_out2 = ip.run(img_in, out_rows, out_cols, param);
-    // cout << float(clock() - t5) / CLOCKS_PER_SEC << endl << endl;
-    // imwrite("out_run6.png", img_out2);
-
-    // cout << "param[0] = " << param[0] <<endl;
-    // cout << "param[1] = " << param[1] <<endl;
-    // cout << "param[2] = " << param[2] <<endl;
-    // cout << "param[3] = " << param[3] <<endl;
-    // cout << "param[4] = " << param[4] <<endl;
-    // cout << "param[5] = " << param[5] <<endl;
+    img_out_beta = ip.run(img_in, out_rows, out_cols, param);
+    cout << float(clock() - t2) / CLOCKS_PER_SEC << endl << endl;
+    imwrite("out_run_beta.png", img_out_beta);
 
     ip.release();
-    //opencv alpha
-    cout << "sw" << endl;
 
-    clock_t t6 = clock();
+    //opencv alpha
+    cout << "sw alpha" << endl;
+    Mat img_out_ocv_a;
+    clock_t t3 = clock();
     
-    resize(img_in, img_out3, Size(out_cols, out_rows), 0, 0, INTER_LINEAR);
+    resize(img_in, img_out_ocv_a, Size(out_cols, out_rows), 0, 0, INTER_LINEAR);
     float alpha_value = 50;
     vector<Mat> channels_alpha;
-    split(img_out3, channels_alpha);
+    split(img_out_ocv_a, channels_alpha);
     for(int i=0; i<3; i++){
         for (int row = 0; row < channels_alpha[i].rows; row++) {
             for (int col = 0; col < channels_alpha[i].cols; col++) {
@@ -153,33 +99,52 @@ int main(int argc, char* argv[])
             }
         } 
     }
-    Mat normalized_ocv_a;
+    Mat normalized_ocv_a; 
     cv::merge(channels_alpha,normalized_ocv_a);
 
-    cout << float(clock() - t6) / CLOCKS_PER_SEC << endl << endl;
+    cout << float(clock() - t3) / CLOCKS_PER_SEC << endl;
 
     imwrite("out_run_ocv_alpha.png", normalized_ocv_a);
 
 
     //opencv beta
-    cout << "sw" << endl;
+    cout << "sw beta" << endl;
 
-    clock_t t7 = clock();
+    Mat img_out_ocv_b;
+    clock_t t4 = clock();
     
-    resize(img_in, img_out3, Size(out_cols, out_rows), 0, 0, INTER_LINEAR);
+    resize(img_in, img_out_ocv_b, Size(out_cols, out_rows), 0, 0, INTER_LINEAR);
     float beta_value = 0.5;
     vector<Mat> channels_beta;
-    split(img_out3, channels_beta);
+    split(img_out_ocv_b, channels_beta);
     for(int i=0; i<3; i++){
         channels_beta[i] = channels_beta[i]*beta_value;
     }
-
-    Mat normalized_ocv_b;
+    Mat normalized_ocv_b; 
     cv::merge(channels_beta,normalized_ocv_b);
 
-    cout << float(clock() - t7) / CLOCKS_PER_SEC << endl << endl;
+    cout << float(clock() - t4) / CLOCKS_PER_SEC << endl << endl;
 
     imwrite("out_run_ocv_beta.png", normalized_ocv_b);
 
+    /****diff error****/
+    Mat error_a ,error_b;
+    absdiff(normalized_ocv_a, img_out_alpha, error_a);
+    absdiff(normalized_ocv_b, img_out_beta, error_b);
+    
+    // float err_per_a,err_per_b;
+    // xf::cv::analyzeDiff(error_a, 5, err_per_a);
+    // xf::cv::analyzeDiff(error_b, 5, err_per_b);
+    // if ((err_per_a > 0.0f) && (err_per_b > 0.0f){
+    //         std::cerr << "ERROR: test failed." << std::endl;
+    //         return -1;
+    //     }
+    //     else{
+    //         std::cout << "Success: test matched." << std::endl;
+    //     }
+
+    imwrite("error_alpha.png" ,error_a);
+    imwrite("error_beta.png" ,error_b);
+    
     return 0;
 };

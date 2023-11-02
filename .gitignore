@@ -1,3 +1,6 @@
 .vscode
 xrt_main.cpp
 header.hpp
+_build
+pic
+meson.build
