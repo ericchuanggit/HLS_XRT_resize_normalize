@@ -16,7 +16,7 @@
 - [Reference](#reference)
 
 # Overview
-This repository shows the example to control HLS resize IP by using XRT API.
+This repository shows the example to control HLS resize + normalize IP by using XRT API.
 # Requirement
 ## Software
 - xrt 2.13.0
@@ -37,13 +37,13 @@ soruce <xilinx-sdk>
 - Following shows how to use this api proiperly.
   ```cpp
   /* declared instance */
-  hls_resize ip;
+  hls_resize_normalize ip;
   /* initial instance */
   ip.initial("Path to xclbin file");
   /* execute instance */
-  Mat img_out0 = ip.run(img_in0, out_rows, out_cols);
+  Mat img_out_alpha = ip.run(img_in, out_rows, out_cols, param);
   ...
-  Mat img_outn = ip.run(img_inn, out_rows, out_cols);
+  Mat img_out_beta = ip.run(img_in, out_rows, out_cols, param);
   /* release instance */
   ip.release();
   ```
@@ -51,22 +51,31 @@ soruce <xilinx-sdk>
 # How to run
 - The result should be like :
   ```bash
-  # ./main ./app-rze.xclbin ./input.png 
+  # ./main_xrt app-eric-1019.xclbin input.jpg 
   hls api first call
-  0.011016
+  [out_run.png]
+  0.007776
+
   hls api second call
-  0.006494
-  sw
-  0.016487
+  [out_run_alpha.png]
+  0.006114
+  [out_run_beta.png]
+  0.005835
+
+  sw alpha
+  0.029339
+  sw beta
+  0.015208
+  
   ```
 - Experimental environment
   - Xilinx k26 platform
   - HLS IP Clock : 275MHz
   - HLS IP Info. : resize NPPC1
 # Notification
-- If the input or output image size changed the buffers will be reallocate, else will using the original buffer. So as you can see in [this section](#how-to-run) the second execution of `hls_resize::run` takes only 60%.
+- If the input or output image size changed the buffers will be reallocate, else will using the original buffer. So as you can see in [this section](#how-to-run) the second execution of `hls_resize_normalize::run` takes only 60%.
 - The maximun value of input and output image size is declared in hw ip.
-- The most of time taked in `hls_resize::run` is writing the `BO` buffer, the acctual calculation time is veryshort.
+- The most of time taked in `hls_resize_normalize::run` is writing the `BO` buffer, the acctual calculation time is veryshort.
 
 # Reference
 - [Vitis Library 2022.1](https://github.com/Xilinx/Vitis_Libraries)
