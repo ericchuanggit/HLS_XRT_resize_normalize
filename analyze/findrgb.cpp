@@ -12,7 +12,7 @@ int main() {
         return -1;
     }
     
-    cv::Mat image = cv::imread("pic/error_alpha.png");
+    cv::Mat image = cv::imread("k26_result_pic/problem_pic/error_alpha.png");
     if (image.empty()) {
         std::cerr << "Could not open or find the image!" << std::endl;
         return -1;
