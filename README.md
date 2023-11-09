@@ -52,20 +52,25 @@ soruce <xilinx-sdk>
 - The result should be like :
   ```bash
   # ./main_xrt app-eric-1019.xclbin input.jpg 
-  hls api first call
-  [out_run.png]
-  0.007776
-
-  hls api second call
+  -------------------------------------------------
+  hls api first call resize<416x416>
+  [out_run_resize.png]
+  0.007521
+  -------------------------------------------------
+  hls api second call normalize<(pixel-alpha)*beta>
+  [alpha_value = 50]
   [out_run_alpha.png]
-  0.006114
-  [out_run_beta.png]
-  0.005835
+  0.005873
 
-  sw alpha
-  0.029339
-  sw beta
-  0.015208
+  [beta_value = 0.5]
+  [out_run_beta.png]
+  0.005853
+  -------------------------------------------------
+  sw : opencv alpha
+  0.021151
+  sw :opencv beta
+  0.00969
+  -------------------------------------------------
   
   ```
 - Experimental environment
