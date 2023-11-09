@@ -29,60 +29,76 @@ int main(int argc, char* argv[])
     // Mat img_resize;
     // resize(img_in, img_resize, Size(1080, 1080), 0, 0, INTER_LINEAR);
     // imwrite("resize.png", img_resize);
-
-    cout << "hls api first call" << endl;
+    cout << "-------------------------------------------------" << endl;
+    cout << "hls api first call resize<416x416>" << endl;
     
 
     hls_resize_normalize ip;
     ip.initial(argv[1]);
 
-    cout << "[out_run.png]" << endl;
+    cout << "[out_run_resize.png]" << endl;
     clock_t t0 = clock();
     /***   normaliztion -> (pixel - alpha) * beta   ***/
-    float param[6]={0,0,0,1,1,1}; // param[0][1][2] -> alpha , param[3][4][5] -> beta
+    /* hls reisze & normalize */
+    float param[6]={0,0,0,1,1,1}; // param[0][1][2] -> alpha , param[3][4][5] -> beta , resize only
     img_out = ip.run(img_in, out_rows, out_cols, param);
-    cout << float(clock() - t0) / CLOCKS_PER_SEC << endl << endl;
-    imwrite("out_run.png", img_out);
+    cout << float(clock() - t0) / CLOCKS_PER_SEC << endl;
+    imwrite("out_run_resize.png", img_out);
+    cout << "-------------------------------------------------" << endl;
+    cout << "hls api second call normalize<(pixel-alpha)*beta>" << endl;
 
-    cout << "hls api second call" << endl;
-    cout << "[out_run_alpha.png]" << endl;
+    //normalize_hls alpha
+    float alpha_value = 50;
+    cout << "[alpha_value = 50]" << endl;
     clock_t t1 = clock();
 
-    param[0]=50;
-    param[1]=50;
-    param[2]=50;
+    param[0]=alpha_value;
+    param[1]=alpha_value;
+    param[2]=alpha_value;
     param[3]=1;
     param[4]=1;
     param[5]=1;
 
     img_out_alpha = ip.run(img_in, out_rows, out_cols, param);
-    cout << float(clock() - t1) / CLOCKS_PER_SEC << endl;
+    cout << "[out_run_alpha.png]" << endl;
+    cout << float(clock() - t1) / CLOCKS_PER_SEC << endl << endl;
     imwrite("out_run_alpha.png", img_out_alpha);
 
-
-    cout << "[out_run_beta.png]" << endl;
+    //normalize_hls beta
+    float beta_value = 0.5;
+    cout << "[beta_value = 0.5]" << endl;
     clock_t t2 = clock();
     
     param[0]=0;
     param[1]=0;
     param[2]=0;
-    param[3]=0.5;
-    param[4]=0.5;
-    param[5]=0.5;
+    param[3]=beta_value;
+    param[4]=beta_value;
+    param[5]=beta_value;
     
     img_out_beta = ip.run(img_in, out_rows, out_cols, param);
-    cout << float(clock() - t2) / CLOCKS_PER_SEC << endl << endl;
+    cout << "[out_run_beta.png]" << endl;
+    cout << float(clock() - t2) / CLOCKS_PER_SEC << endl;
     imwrite("out_run_beta.png", img_out_beta);
 
     ip.release();
 
-    //opencv alpha
-    cout << "sw alpha" << endl;
+    /* opencv alpha software compare test */
+    cout << "-------------------------------------------------" << endl;
+    cout << "sw : opencv alpha" << endl;
     Mat img_out_ocv_a;
     clock_t t3 = clock();
-    
-    resize(img_in, img_out_ocv_a, Size(out_cols, out_rows), 0, 0, INTER_LINEAR);
-    float alpha_value = 50;
+
+    //from hls resize
+    param[0]=0;
+    param[1]=0;
+    param[2]=0;
+    param[3]=1;
+    param[4]=1;
+    param[5]=1;
+    img_out_ocv_a = ip.run(img_in, out_rows, out_cols, param);
+
+    //normalize_ocv alpha
     vector<Mat> channels_alpha;
     split(img_out_ocv_a, channels_alpha);
     for(int i=0; i<3; i++){
@@ -107,14 +123,23 @@ int main(int argc, char* argv[])
     imwrite("out_run_ocv_alpha.png", normalized_ocv_a);
 
 
-    //opencv beta
-    cout << "sw beta" << endl;
+    /* opencv beta software compare test */
+    cout << "sw :opencv beta" << endl;
+    
 
     Mat img_out_ocv_b;
     clock_t t4 = clock();
     
-    resize(img_in, img_out_ocv_b, Size(out_cols, out_rows), 0, 0, INTER_LINEAR);
-    float beta_value = 0.5;
+    //from hls resize
+    param[0]=0;
+    param[1]=0;
+    param[2]=0;
+    param[3]=1;
+    param[4]=1;
+    param[5]=1;
+    img_out_ocv_b = ip.run(img_in, out_rows, out_cols, param);
+
+    //normalize_ocv beta
     vector<Mat> channels_beta;
     split(img_out_ocv_b, channels_beta);
     for(int i=0; i<3; i++){
@@ -123,7 +148,8 @@ int main(int argc, char* argv[])
     Mat normalized_ocv_b; 
     cv::merge(channels_beta,normalized_ocv_b);
 
-    cout << float(clock() - t4) / CLOCKS_PER_SEC << endl << endl;
+    cout << float(clock() - t4) / CLOCKS_PER_SEC << endl;
+    cout << "-------------------------------------------------" << endl;
 
     imwrite("out_run_ocv_beta.png", normalized_ocv_b);
 
@@ -132,17 +158,6 @@ int main(int argc, char* argv[])
     absdiff(normalized_ocv_a, img_out_alpha, error_a);
     absdiff(normalized_ocv_b, img_out_beta, error_b);
     
-    // float err_per_a,err_per_b;
-    // xf::cv::analyzeDiff(error_a, 5, err_per_a);
-    // xf::cv::analyzeDiff(error_b, 5, err_per_b);
-    // if ((err_per_a > 0.0f) && (err_per_b > 0.0f){
-    //         std::cerr << "ERROR: test failed." << std::endl;
-    //         return -1;
-    //     }
-    //     else{
-    //         std::cout << "Success: test matched." << std::endl;
-    //     }
-
     imwrite("error_alpha.png" ,error_a);
     imwrite("error_beta.png" ,error_b);
     
