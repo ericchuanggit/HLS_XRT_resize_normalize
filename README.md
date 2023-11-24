@@ -16,7 +16,7 @@
 - [Reference](#reference)
 
 # Overview
-This repository shows the example to control HLS resize + normalize IP by using XRT API.
+This repository shows the example to control HLS resize_normalize IP by using XRT API.
 # Requirement
 ## Software
 - xrt 2.13.0
@@ -28,10 +28,15 @@ This repository shows the example to control HLS resize + normalize IP by using 
 - Xilinx FPGA - zynqmp
 
 # How to build
-```bash
-soruce <xilinx-sdk>
-./build.sh
-```
+- Install meson and ninja.
+  ```bash
+  pip3 install meson ninja
+  ```
+- Build the libraries and binary file
+  ```bash
+  soruce <xilinx-sdk>
+  ./build.sh
+  ```
 
 # How to use
 - Following shows how to use this api proiperly.
@@ -41,9 +46,9 @@ soruce <xilinx-sdk>
   /* initial instance */
   ip.initial("Path to xclbin file");
   /* execute instance */
-  Mat img_out_alpha = ip.run(img_in, out_rows, out_cols, param);
+  Mat img_out0 = ip.run(img_in0, out_rows, out_cols, param);
   ...
-  Mat img_out_beta = ip.run(img_in, out_rows, out_cols, param);
+  Mat img_outn = ip.run(img_inn, out_rows, out_cols, param);
   /* release instance */
   ip.release();
   ```
@@ -51,36 +56,36 @@ soruce <xilinx-sdk>
 # How to run
 - The result should be like :
   ```bash
-  # ./main_xrt app-eric-1019.xclbin input.jpg 
+  ./main app-eric-1019.xclbin input.png 
   -------------------------------------------------
-  hls api first call resize<416x416>
-  [out_run_resize.png]
-  0.007521
+  hls api resize & normalize first call
+  0.0195293
   -------------------------------------------------
-  hls api second call normalize<(pixel-alpha)*beta>
-  [alpha_value = 50]
-  [out_run_alpha.png]
-  0.005873
-
-  [beta_value = 0.5]
-  [out_run_beta.png]
-  0.005853
+  hls api resize & normalize second call
+  0.0178829
   -------------------------------------------------
-  sw : opencv alpha
-  0.021151
-  sw :opencv beta
-  0.00969
+  cpu call
+  0.0143743
   -------------------------------------------------
-  
   ```
 - Experimental environment
   - Xilinx k26 platform
   - HLS IP Clock : 275MHz
   - HLS IP Info. : resize NPPC1
+
+# How to install
+- Default install to `/usr/lib`, if using sdk it will install into the sdk.
+  ```bash
+  # Run build.sh before this executing the install script.
+  ./install.sh
+  ``` 
+
 # Notification
-- If the input or output image size changed the buffers will be reallocate, else will using the original buffer. So as you can see in [this section](#how-to-run) the second execution of `hls_resize_normalize::run` takes only 60%.
+- If the input or output image size changed the buffers will be reallocate, else will using the original buffer. So as you can see in [this section](#how-to-run) the second execution of `hls_resize_normalize::run` takes only 90%.
 - The maximun value of input and output image size is declared in hw ip.
 - The most of time taked in `hls_resize_normalize::run` is writing the `BO` buffer, the acctual calculation time is veryshort.
+- Althought HLS IP takes more time then traditional opencv, it still makes the CPU could do something more important that enhance the overall preformance.
+
 
 # Reference
 - [Vitis Library 2022.1](https://github.com/Xilinx/Vitis_Libraries)
