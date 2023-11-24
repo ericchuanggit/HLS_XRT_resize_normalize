@@ -27,8 +27,8 @@ int main(int argc, char* argv[])
     
     timer T;
 
-    unsigned int out_cols = 720;
-    unsigned int out_rows = 720;
+    unsigned int out_cols = 416;
+    unsigned int out_rows = 416;
 
 
     cout << "-------------------------------------------------" << endl;
@@ -83,6 +83,5 @@ int main(int argc, char* argv[])
     absdiff(img_opencv, img_hls, error);
     imwrite("error.png" ,error);
  
-    ip.release();
     return 0;
 };
