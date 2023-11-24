@@ -1,5 +1,5 @@
 project('project', 'cpp')
-target = 'main_xrt'
+target = 'main'
 
 cc = meson.get_compiler('cpp')
 
@@ -16,6 +16,9 @@ inc_dir = [
     'inc'
 ]
 
+
 libs = [static_library('_hls_resize_normalize', 'src/hls_resize_normalize.cpp', dependencies : dep, include_directories : inc_dir)]
 
-exe = executable(target, target + '.cpp', link_with : libs, dependencies : dep, include_directories : inc_dir)
+shared_library('_hls_resize_normalize', 'src/hls_resize_normalize.cpp', dependencies : dep, include_directories : inc_dir)
+
+exe = executable('project', target + '.cpp', link_with : libs, dependencies : dep, include_directories : inc_dir)
