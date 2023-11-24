@@ -56,16 +56,16 @@ This repository shows the example to control HLS resize_normalize IP by using XR
 # How to run
 - The result should be like :
   ```bash
-  ./main app-eric-1019.xclbin input.png 
+  ./project app-eric-1019.xclbin rgb.png 
   -------------------------------------------------
   hls api resize & normalize first call
-  0.0195293
+  0.0193611
   -------------------------------------------------
   hls api resize & normalize second call
-  0.0178829
+  0.0150545
   -------------------------------------------------
   cpu call
-  0.0143743
+  0.00813333
   -------------------------------------------------
   ```
 - Experimental environment
