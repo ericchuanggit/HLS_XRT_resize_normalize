@@ -1,0 +1,11 @@
+prefix=/usr
+exec_prefix=/usr
+libdir=/usr/lib
+includedir=/usr/include
+
+Name: _hls_resize_normalize
+Description: hls resize_normalize ip applicaiton api
+URL: https://github.com/ericchuanggit/HLS_XRT_resize_normalize
+Version: 0.0.1
+Libs: -L${libdir} -l_hls_resize_normalize
+Cflags: -I${includedir}
