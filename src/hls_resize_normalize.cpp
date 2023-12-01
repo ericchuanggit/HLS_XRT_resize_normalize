@@ -4,6 +4,7 @@
 // https://opensource.org/licenses/MIT
 
 #include "hls_resize_normalize.hpp"
+#include "timer.hpp"
 
 using namespace std;
 using namespace cv;
@@ -33,8 +34,8 @@ void hls_resize_normalize::set(const unsigned int in_row, const unsigned int in_
     size_img_out = out_width*out_height*3*sizeof(unsigned char);
     
     /* Allocate XRT BO */
-    bo_img_in     = xrt::bo(device, size_img_in, kernel.group_id(0));
-    bo_img_out    = xrt::bo(device, size_img_out, kernel.group_id(1));
+    bo_img_in     = xrt::bo(device, size_img_in, xrt::bo::flags::normal, kernel.group_id(0));
+    bo_img_out    = xrt::bo(device, size_img_out, xrt::bo::flags::cacheable, kernel.group_id(1));
 }
     /* Allocate Mat */  
 Mat hls_resize_normalize::run(const Mat img_in, const unsigned int out_row, const unsigned int out_col, const float* param)
@@ -47,19 +48,27 @@ Mat hls_resize_normalize::run(const Mat img_in, const unsigned int out_row, cons
 
     img_out.create(out_height, out_width, CV_8UC3);
 
+    timer T;
+    T.start();
     /* Write BO */
     bo_img_in.write(img_in.data);
     bo_img_in.sync(XCL_BO_SYNC_BO_TO_DEVICE);
     bo_params.write(param);
     bo_params.sync(XCL_BO_SYNC_BO_TO_DEVICE);
+    T.end();
+
+
     /* Execute runner */
     runner(bo_img_in, bo_img_out, in_width, in_height, out_width, out_height, bo_params);
     /* Wait for runner, 1 sec timeout */
     status = runner.wait(1000);
+    
+    T.start();
     /* Read BO */
     bo_params.sync(XCL_BO_SYNC_BO_FROM_DEVICE);
     bo_img_out.read(img_out.data);
-
+    T.end();
+    
     return img_out;
 }
 
