@@ -1,0 +1,10 @@
+set XPART xck26-sfvc784-2LVI-i
+set CSIM 1
+set CSYNTH 0
+set COSIM 0
+set VIVADO_SYN 0
+set VIVADO_IMPL 0
+set XF_PROJ_ROOT "/home/eric/Vitis_Libraries/vision"
+set OPENCV_INCLUDE "/usr/local/include/opencv4"
+set OPENCV_LIB "/usr/local/lib"
+set CUR_DIR "/home/eric/Desktop/HLS_XRT/HLS_XRT_resize_normalize/krnl"
