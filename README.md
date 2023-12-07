@@ -59,13 +59,13 @@ This repository shows the example to control HLS resize_normalize IP by using XR
   ./project app-eric-1019.xclbin rgb.png 
   -------------------------------------------------
   hls api resize & normalize first call
-  0.0193611
+  0.0162699
   -------------------------------------------------
   hls api resize & normalize second call
-  0.0150545
+  0.0118955
   -------------------------------------------------
   cpu call
-  0.00813333
+  0.00829005
   -------------------------------------------------
   ```
 - Experimental environment
